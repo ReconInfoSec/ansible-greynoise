@@ -1,0 +1,23 @@
+---
+- name: Testing GreyNoise modules
+  hosts: localhost
+  tasks:
+
+    - name: List all tags
+      greynoise:
+        action: list_tags
+      register: results
+
+    - name: Query IP with GreyNoise
+      greynoise:
+        action: query_ip
+        ip: "198.20.69.74"
+        key: "{{ greynoise_api_key }}"
+      register: results
+
+    - name: Query tag with GreyNoise
+      greynoise:
+        action: query_tag
+        tag: "SHODAN"
+        key: "{{ greynoise_api_key }}"
+      register: results
