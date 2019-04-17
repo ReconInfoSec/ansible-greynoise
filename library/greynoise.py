@@ -51,7 +51,7 @@ EXAMPLES = '''
 # Query all IPs that have a given tag
 - greynoise:
     action: query_tag
-    ip: "shodan"
+    ip: "SHODAN"
     greynoise_api_key: "<API_KEY>"
 '''
 
