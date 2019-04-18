@@ -2,11 +2,14 @@
 # (c) 2019, Whitney Champion <whitney.ellis.champion@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 ANSIBLE_METADATA = {'metadata_version': '1.0',
                     'status': ['preview'],
                     'supported_by': 'community'}
 
-DOCUMENTATION = """
+DOCUMENTATION = '''
 module: greynoise
 short_description: Communicate with the GreyNoise API
 description:
@@ -35,7 +38,7 @@ options:
       - GreyNoise API key
     required: false
     default: None
-"""
+'''
 
 EXAMPLES = '''
 # List all tags available
@@ -77,14 +80,15 @@ url:
   sample: https://www.ansible.com/
 '''
 
-def list_tags(module,base_url):
+
+def list_tags(module, base_url):
 
     url = base_url + "list"
 
     response, info = fetch_url(module=module, url=url, method='GET')
 
     if info['status'] != 200:
-        module.fail_json(msg="Fail: %s" % ( "Status: "+str(info['msg']) + ", Message: " + str(info['body'])))
+        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
 
     try:
         content = response.read()
@@ -93,16 +97,17 @@ def list_tags(module,base_url):
 
     return info['status'], info['msg'], content, url
 
-def query_ip(module,base_url,ip,greynoise_api_key):
+
+def query_ip(module, base_url, ip, greynoise_api_key):
 
     url = base_url + "ip"
 
-    data = 'key=%s&ip=%s' % (greynoise_api_key,ip)
+    data = 'key=%s&ip=%s' % (greynoise_api_key, ip)
 
     response, info = fetch_url(module=module, url=url, method='POST', data=data)
 
     if info['status'] != 200:
-        module.fail_json(msg="Fail: %s" % ( "Status: "+str(info['msg']) + ", Message: " + str(info['body'])))
+        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
 
     try:
         content = response.read()
@@ -111,16 +116,17 @@ def query_ip(module,base_url,ip,greynoise_api_key):
 
     return info['status'], info['msg'], content, url
 
-def query_tag(module,base_url,tag,greynoise_api_key):
+
+def query_tag(module, base_url, tag, greynoise_api_key):
 
     url = base_url + "tag"
 
-    data = 'key=%s&tag=%s' % (greynoise_api_key,tag)
+    data = 'key=%s&tag=%s' % (greynoise_api_key, tag)
 
     response, info = fetch_url(module=module, url=url, method='POST', data=data)
 
     if info['status'] != 200:
-        module.fail_json(msg="Fail: %s" % ( "Status: "+str(info['msg']) + ", Message: " + str(info['body'])))
+        module.fail_json(msg="Fail: %s" % ("Status: " + str(info['msg']) + ", Message: " + str(info['body'])))
 
     try:
         content = response.read()
@@ -129,13 +135,14 @@ def query_tag(module,base_url,tag,greynoise_api_key):
 
     return info['status'], info['msg'], content, url
 
+
 def main():
     module = AnsibleModule(
-        argument_spec = dict(
-            action         = dict(type='str', required=False, default='list_tags', choices=['query_ip', 'query_tag', 'list_tags']),
-            ip    = dict(type='str', default=None),
-            tag    = dict(type='str', default=None),
-            greynoise_api_key  = dict(type='str', default=None, no_log=True)
+        argument_spec=dict(
+            action=dict(type='str', required=False, default='list_tags', choices=['query_ip', 'query_tag', 'list_tags']),
+            ip=dict(type='str', default=None),
+            tag=dict(type='str', default=None),
+            greynoise_api_key=dict(type='str', default=None, no_log=True)
         )
     )
 
@@ -147,11 +154,11 @@ def main():
     base_url = "http://api.greynoise.io:8888/v1/query/"
 
     if action == "query_ip":
-        status, message, content, url = query_ip(module,base_url,ip,greynoise_api_key)
+        status, message, content, url = query_ip(module, base_url, ip, greynoise_api_key)
     elif action == "query_tag":
-        status, message, content, url = query_tag(module,base_url,tag,greynoise_api_key)
+        status, message, content, url = query_tag(module, base_url, tag, greynoise_api_key)
     elif action == "list_tags":
-        status, message, content, url = list_tags(module,base_url)
+        status, message, content, url = list_tags(module, base_url)
 
     uresp = {}
     content = to_text(content, encoding='UTF-8')
@@ -168,11 +175,13 @@ def main():
 
     module.exit_json(**uresp)
 
+
 # import module snippets
 import json
 import base64
 from ansible.module_utils.basic import *
 from ansible.module_utils.urls import *
+
 
 if __name__ == '__main__':
     main()
