@@ -1,37 +1,49 @@
 ---
 - name: Testing GreyNoise modules
   hosts: localhost
+  vars:
+    greynoise_api_key: ""
   tasks:
 
     - name: List all tags
       greynoise:
         action: list_tags
+        greynoise_api_key: "{{ greynoise_api_key }}"
       register: results
+
+    - debug:
+        msg: "{{ results }}"
 
     - name: Query IP with GreyNoise
       greynoise:
         action: query_ip
         ip: "178.153.38.136"
-        key: "{{ greynoise_api_key }}"
+        greynoise_api_key: "{{ greynoise_api_key }}"
       register: results
 
-    - name: Show name and category with intention malicious from previous results
+    - debug:
+        msg: "{{ results }}"
+
+    - name: Show name and category with classification malicious from previous results
       debug:
-        msg: "{{ item.name }} - {{ item.category }}"
+        msg: "{{ item.actor }} - {{ item.metadata.category }}"
       with_items:
-        - "{{ results.json.records }}"
-      when: item.intention == "malicious"
+        - "{{ results.json.data }}"
+      when: item.classification == "malicious"
 
     - name: Query tag with GreyNoise
       greynoise:
         action: query_tag
-        tag: "PHP_WORM"
-        key: "{{ greynoise_api_key }}"
+        tag: "EternalBlue"
+        greynoise_api_key: "{{ greynoise_api_key }}"
       register: results
 
-    - name: Show IP and organization with intention malicious from previous results
+    - debug:
+        msg: "{{ results }}"
+
+    - name: Show IP and organization with classification malicious from previous results
       debug:
-        msg: "{{ item.ip }} - {{ item.metadata.org }}"
+        msg: "{{ item.ip }} - {{ item.metadata.organization }}"
       with_items:
-        - "{{ results.json.records }}"
-      when: item.intention == "malicious"
+        - "{{ results.json.data }}"
+      when: item.classification == "malicious"
