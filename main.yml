@@ -2,7 +2,7 @@
 - name: Testing GreyNoise modules
   hosts: localhost
   vars:
-    greynoise_api_key: ""
+    greynoise_api_key: "6dc6a60206ab2eb5ce982e74922959fe25940432b384263aecce26adbb3c204a"
   tasks:
 
     - name: List all tags
